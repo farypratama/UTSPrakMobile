@@ -5,6 +5,7 @@ package id.ac.uinsgd.utsprakmobile.Adapter;
  */
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,20 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import id.ac.uinsgd.utsprakmobile.BookingFragment;
 import id.ac.uinsgd.utsprakmobile.R;
 
 public class AdapterMeja extends ArrayAdapter<String> {
 
     public final Activity context;
     public final String[] item;
-    public final String[] tersedia;
+    ArrayList<String> tersedia = new ArrayList<String>();
 
-    public AdapterMeja(Activity context, String[] item, String[] tersedia)
+    public AdapterMeja(Activity context, String[] item, ArrayList tersedia)
     {
         super(context, R.layout.list1,item);
 
@@ -31,7 +36,7 @@ public class AdapterMeja extends ArrayAdapter<String> {
 
 
     }
-    public View getView(int position, View view, ViewGroup parent)
+    public View getView(final int position, View view, ViewGroup parent)
     {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list2,null,true);
@@ -39,29 +44,42 @@ public class AdapterMeja extends ArrayAdapter<String> {
         TextView nama=(TextView) rowView.findViewById(R.id.txt_meja);
         TextView sedia=(TextView) rowView.findViewById(R.id.txt_sedia);
         CheckBox cekbox=(CheckBox)rowView.findViewById((R.id.cek_meja)) ;
+
+
         nama.setText(item[position]);
-
-        cekbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        if(tersedia.get(position).equals("Tersedia"))
         {
+            sedia.setTextColor(Color.GREEN);
+            sedia.setText(tersedia.get(position));
+            cekbox.setChecked(false);
+        }
+        else
+        {
+            sedia.setTextColor(Color.RED);
+            sedia.setText(tersedia.get(position));
+            cekbox.setChecked(true);
+        }
 
+
+        cekbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                if (isChecked) {
-
-                    /*(tersedia[position].equals("Tersedia"))
-                    {
-
-                        sedia.setText(tersedia[position]);
-                        sedia.setTextColor(Color.GREEN);
-                        BookingFragment.Ketersediaan
-                    }*/
-
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked)
+                {
+                    BookingFragment.ketersediaan.set(position,"Tidak Tersedia");
+                    Toast.makeText(getContext(),item[position] + " Di Booking",Toast.LENGTH_SHORT ).show();
                 }
-
+                else
+                {
+                    BookingFragment.ketersediaan.set(position,"Tersedia");
+                    Toast.makeText(getContext(),item[position] + " Tersedia",Toast.LENGTH_SHORT ).show();
+                }
+                notifyDataSetChanged();
             }
-
         });
+
+
+
 
 
         /*else
